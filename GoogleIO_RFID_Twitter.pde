@@ -62,6 +62,9 @@ void draw()
   String[] waitingForTag = {
     "Waiting", "For", "Tag"
   };  
+  String[] tryAgain = {
+    "Sorry,", "Try", "Again"
+  };  
   String[] hello = {
     "Hello", "There,", "@" + currentName
   };
@@ -84,6 +87,7 @@ void draw()
     if (mySerial.available () > 0) { // Check to see if we got anything from Arduino
 
       String response = getString();
+      println("[" + response + "]");
 
       String[] splitResponse = split(response, "/");
 
@@ -99,6 +103,10 @@ void draw()
       } 
       else {
         currentName = ""; // didn't get a Twitter URL. Try with another tag.
+        background(255);
+        drawMsg(tryAgain, 15, 30);
+        restartState();
+
       }
     }
     break;
@@ -126,13 +134,17 @@ void draw()
     else {
       mySerial.write("-"); // Get tweeting!
     }
-    seeking = 0;
-    currentName = "";
-    startTime = millis();
-    warmedUp = 0;
+    restartState();
   }
 }
 
+// Reset the state to the initial state
+void restartState() {
+  seeking = 0;
+  currentName = "";
+  startTime = millis();
+  warmedUp = 0;
+}
 // Read a string from the serial port
 String getString() {
   String inBuffer = "";   
